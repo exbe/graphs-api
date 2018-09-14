@@ -1,4 +1,4 @@
-package lang
+package info.exbe.graphs.lang
 
 
 import spock.lang.Specification

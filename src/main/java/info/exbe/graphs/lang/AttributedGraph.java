@@ -1,4 +1,4 @@
-package lang;
+package info.exbe.graphs.lang;
 
 public interface AttributedGraph<P extends Properties> extends Graph {
 

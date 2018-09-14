@@ -1,4 +1,4 @@
-package lang;
+package info.exbe.graphs.lang;
 
 public interface  Properties {
     default int totalNodes() { return 0; }
