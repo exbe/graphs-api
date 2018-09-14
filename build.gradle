@@ -1,15 +1,82 @@
 group 'info.exbe'
-version '0.1.0'
+version '0.1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+archivesBaseName = "graphs-api"
 
 
 repositories {
     mavenCentral()
 }
 
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
 dependencies {
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
     testRuntime group: 'com.athaydes', name: 'spock-reports', version: '1.6.0'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Graphs API'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Defines contract for implementations of graph api'
+                url 'https://github.com/exbe/graphs-api'
+
+                scm {
+                    connection 'scm:svn:https://github.com/exbe/graphs-api'
+                    developerConnection 'scm:svn:https://github.com/exbe/graphs-api'
+                    url 'https://github.com/exbe/graphs-api'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'exbe'
+                        name 'Alex Matiushkin'
+                        email 'exbeinfo@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
